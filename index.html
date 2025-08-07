@@ -9,6 +9,7 @@
       font-family: sans-serif;
       text-align: center;
     }
+
     .map-container {
       position: relative;
       width: 100%;
@@ -30,6 +31,7 @@
       cursor: pointer;
       z-index: 10;
     }
+
     .jungle-stage     { left: 64.4%;  top: 62.72%; }
     .bar-1            { left: 57.3%;  top: 65.54%; }
     .snack-bar        { left: 59.2%;  top: 61.34%; }
@@ -47,26 +49,54 @@
     .hotspot:hover {
       background-color: rgba(255, 255, 255, 0.2);
     }
+
+    .tooltip {
+      display: none;
+    }
+
+    .hotspot.active .tooltip {
+      display: block;
+      position: absolute;
+      top: -30px;
+      left: 25px;
+      background: white;
+      color: black;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 14px;
+      white-space: nowrap;
+      z-index: 20;
+    }
   </style>
 </head>
 <body>
   <div id="map-container">
-  <img id="map" src="your-map-image.jpg" alt="ArcadiaMap">
+    <img id="map" src="your-map-image.png" alt="ArcadiaMap">
 
-  <div class="hotspot jungle-stage"><div class="tooltip">Jungle Stage</div></div>
-  <div class="hotspot bar-1"><div class="tooltip">Bar</div></div>
-  <div class="hotspot snack-bar"><div class="tooltip">Snack Bar</div></div>
-  <div class="hotspot chill-garden"><div class="tooltip">Chill Garden</div></div>
-  <div class="hotspot therapies"><div class="tooltip">Therapies</div></div>
-  <div class="hotspot art-space"><div class="tooltip">Art Space</div></div>
-  <div class="hotspot utopia-stage"><div class="tooltip">Utopia Stage</div></div>
-  <div class="hotspot bar-2"><div class="tooltip">Bar</div></div>
-  <div class="hotspot market"><div class="tooltip">Market</div></div>
-  <div class="hotspot psycare"><div class="tooltip">Psycare</div></div>
-  <div class="hotspot bar-3"><div class="tooltip">Bar</div></div>
-  <div class="hotspot food-area"><div class="tooltip">Food Area</div></div>
-  <div class="hotspot workshops"><div class="tooltip">Workshops</div></div>
-</div>
+    <div class="hotspot jungle-stage"><div class="tooltip">Jungle Stage</div></div>
+    <div class="hotspot bar-1"><div class="tooltip">Bar</div></div>
+    <div class="hotspot snack-bar"><div class="tooltip">Snack Bar</div></div>
+    <div class="hotspot chill-garden"><div class="tooltip">Chill Garden</div></div>
+    <div class="hotspot therapies"><div class="tooltip">Therapies</div></div>
+    <div class="hotspot art-space"><div class="tooltip">Art Space</div></div>
+    <div class="hotspot utopia-stage"><div class="tooltip">Utopia Stage</div></div>
+    <div class="hotspot bar-2"><div class="tooltip">Bar</div></div>
+    <div class="hotspot market"><div class="tooltip">Market</div></div>
+    <div class="hotspot psycare"><div class="tooltip">Psycare</div></div>
+    <div class="hotspot bar-3"><div class="tooltip">Bar</div></div>
+    <div class="hotspot food-area"><div class="tooltip">Food Area</div></div>
+    <div class="hotspot workshops"><div class="tooltip">Workshops</div></div>
+  </div>
+
+  <div id="popup" style="
+    position: absolute;
+    background: white;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display: none;
+    z-index: 100;
+  "></div>
 
   <script>
     function showPopup(event, text) {
@@ -83,22 +113,28 @@
       }
     });
   </script>
+
   <script>
     document.querySelectorAll('.hotspot').forEach(hotspot => {
-      hotspot.addEventListener('click', () => {
-        // Remove active class from all hotspots
+      hotspot.addEventListener('click', (e) => {
         document.querySelectorAll('.hotspot').forEach(h => h.classList.remove('active'));
-        // Add active class to clicked hotspot
         hotspot.classList.add('active');
+
+        const tooltip = hotspot.querySelector('.tooltip');
+        if (tooltip) {
+          showPopup(e, tooltip.textContent);
+        }
       });
     });
 
-    // Optional: click anywhere else to hide tooltips
     document.addEventListener('click', e => {
       if (!e.target.closest('.hotspot')) {
         document.querySelectorAll('.hotspot').forEach(h => h.classList.remove('active'));
+        document.getElementById('popup').style.display = 'none';
       }
     });
   </script>
 </body>
 </html>
+
+
