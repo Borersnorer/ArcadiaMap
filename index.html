@@ -11,38 +11,62 @@
     }
     .map-container {
       position: relative;
-      display: inline-block;
+      width: 100%;
     }
+
+    #map {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
     .hotspot {
       position: absolute;
-      width: 30px;
-      height: 30px;
-      background-color: red;
+      width: 20px;
+      height: 20px;
+      background-color: transparent;
+      border: 2px solid white;
       border-radius: 50%;
       cursor: pointer;
-      opacity: 0.7;
-    }
-    .popup {
-      position: absolute;
-      background: white;
-      border: 1px solid #ccc;
-      padding: 10px;
-      display: none;
       z-index: 10;
+    }
+    .jungle-stage     { left: 64.4%;  top: 62.72%; }
+    .bar-1            { left: 57.3%;  top: 65.54%; }
+    .snack-bar        { left: 59.2%;  top: 61.34%; }
+    .chill-garden     { left: 40.5%;  top: 50.38%; }
+    .therapies        { left: 42.0%;  top: 44.29%; }
+    .art-space        { left: 39.2%;  top: 41.72%; }
+    .utopia-stage     { left: 34.3%;  top: 36.16%; }
+    .bar-2            { left: 25.4%;  top: 37.91%; }
+    .market           { left: 22.6%;  top: 35.89%; }
+    .psycare          { left: 19.3%;  top: 32.91%; }
+    .bar-3            { left: 22.6%;  top: 31.29%; }
+    .food-area        { left: 26.8%;  top: 32.37%; }
+    .workshops        { left: 80.5%;  top: 60.27%; }
+
+    .hotspot:hover {
+      background-color: rgba(255, 255, 255, 0.2);
     }
   </style>
 </head>
 <body>
-  <h1>My Interactive Map</h1>
-  <div class="map-container">
-    <img src="ArcadiaMap.png" alt="Map" id="map" style="max-width: 100%;">
-    
-    <!-- Example hotspot -->
-    <div class="hotspot" style="top: 100px; left: 150px;" onclick="showPopup(event, 'This is location 1')"></div>
-    <div class="hotspot" style="top: 200px; left: 300px;" onclick="showPopup(event, 'This is location 2')"></div>
+  <div id="map-container">
+  <img id="map" src="your-map-image.jpg" alt="ArcadiaMap">
 
-    <div id="popup" class="popup"></div>
-  </div>
+  <div class="hotspot jungle-stage"><div class="tooltip">Jungle Stage</div></div>
+  <div class="hotspot bar-1"><div class="tooltip">Bar</div></div>
+  <div class="hotspot snack-bar"><div class="tooltip">Snack Bar</div></div>
+  <div class="hotspot chill-garden"><div class="tooltip">Chill Garden</div></div>
+  <div class="hotspot therapies"><div class="tooltip">Therapies</div></div>
+  <div class="hotspot art-space"><div class="tooltip">Art Space</div></div>
+  <div class="hotspot utopia-stage"><div class="tooltip">Utopia Stage</div></div>
+  <div class="hotspot bar-2"><div class="tooltip">Bar</div></div>
+  <div class="hotspot market"><div class="tooltip">Market</div></div>
+  <div class="hotspot psycare"><div class="tooltip">Psycare</div></div>
+  <div class="hotspot bar-3"><div class="tooltip">Bar</div></div>
+  <div class="hotspot food-area"><div class="tooltip">Food Area</div></div>
+  <div class="hotspot workshops"><div class="tooltip">Workshops</div></div>
+</div>
 
   <script>
     function showPopup(event, text) {
@@ -60,12 +84,21 @@
     });
   </script>
   <script>
-  const map = document.getElementById('map');
+    document.querySelectorAll('.hotspot').forEach(hotspot => {
+      hotspot.addEventListener('click', () => {
+        // Remove active class from all hotspots
+        document.querySelectorAll('.hotspot').forEach(h => h.classList.remove('active'));
+        // Add active class to clicked hotspot
+        hotspot.classList.add('active');
+      });
+    });
 
-  map.addEventListener('click', e => {
-    // offsetX/Y give the position relative to the image’s top-left
-    console.log(`x = ${e.offsetX}px, y = ${e.offsetY}px`);
-  });
-</script>
+    // Optional: click anywhere else to hide tooltips
+    document.addEventListener('click', e => {
+      if (!e.target.closest('.hotspot')) {
+        document.querySelectorAll('.hotspot').forEach(h => h.classList.remove('active'));
+      }
+    });
+  </script>
 </body>
 </html>
