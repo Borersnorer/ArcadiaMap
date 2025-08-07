@@ -108,15 +108,9 @@
     }
 
     document.addEventListener('click', function(e) {
-      if (!e.target.classList.contains('hotspot')) {
-        document.getElementById('popup').style.display = 'none';
-      }
-    });
-  </script>
-
-  <script>
-    document.querySelectorAll('.hotspot').forEach(hotspot => {
-      hotspot.addEventListener('click', (e) => {
+      const hotspot = e.target.closest('.hotspot');
+      if (hotspot) {
+        // Activate clicked hotspot
         document.querySelectorAll('.hotspot').forEach(h => h.classList.remove('active'));
         hotspot.classList.add('active');
 
@@ -124,11 +118,8 @@
         if (tooltip) {
           showPopup(e, tooltip.textContent);
         }
-      });
-    });
-
-    document.addEventListener('click', e => {
-      if (!e.target.closest('.hotspot')) {
+      } else {
+        // Clicked outside any hotspot
         document.querySelectorAll('.hotspot').forEach(h => h.classList.remove('active'));
         document.getElementById('popup').style.display = 'none';
       }
