@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Interactive Map</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      text-align: center;
+    }
+    .map-container {
+      position: relative;
+      display: inline-block;
+    }
+    .hotspot {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background-color: red;
+      border-radius: 50%;
+      cursor: pointer;
+      opacity: 0.7;
+    }
+    .popup {
+      position: absolute;
+      background: white;
+      border: 1px solid #ccc;
+      padding: 10px;
+      display: none;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <h1>My Interactive Map</h1>
+  <div class="map-container">
+    <img src="ArcadiaMap.png" alt="Map" id="map" style="max-width: 100%;">
+    
+    <!-- Example hotspot -->
+    <div class="hotspot" style="top: 100px; left: 150px;" onclick="showPopup(event, 'This is location 1')"></div>
+    <div class="hotspot" style="top: 200px; left: 300px;" onclick="showPopup(event, 'This is location 2')"></div>
+
+    <div id="popup" class="popup"></div>
+  </div>
+
+  <script>
+    function showPopup(event, text) {
+      const popup = document.getElementById('popup');
+      popup.style.left = event.pageX + 'px';
+      popup.style.top = event.pageY + 'px';
+      popup.innerHTML = text;
+      popup.style.display = 'block';
+    }
+
+    document.addEventListener('click', function(e) {
+      if (!e.target.classList.contains('hotspot')) {
+        document.getElementById('popup').style.display = 'none';
+      }
+    });
+  </script>
+  <script>
+  const map = document.getElementById('map');
+
+  map.addEventListener('click', e => {
+    // offsetX/Y give the position relative to the image’s top-left
+    console.log(`x = ${e.offsetX}px, y = ${e.offsetY}px`);
+  });
+</script>
+</body>
+</html>
