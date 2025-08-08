@@ -13,12 +13,17 @@
     .map-container {
       position: relative;
       width: 100%;
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
     }
 
     #map {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
-      height: auto;
-      display: block;
+      height: 100%;
+      object-fit: cover;
     }
 
     .hotspot {
@@ -30,6 +35,11 @@
       border-radius: 50%;
       cursor: pointer;
       z-index: 10;
+    }
+
+    .hotspot:focus-visible {
+      outline: 3px solid #fff;
+      outline-offset: 2px;
     }
 
     .jungle-stage     { left: 64.4%;  top: 62.72%; }
@@ -53,39 +63,26 @@
     .tooltip {
       display: none;
     }
-
-    .hotspot.active .tooltip {
-      display: block;
-      position: absolute;
-      top: -30px;
-      left: 25px;
-      background: white;
-      color: black;
-      padding: 5px 10px;
-      border-radius: 5px;
-      font-size: 14px;
-      white-space: nowrap;
-      z-index: 20;
-    }
+  
   </style>
 </head>
 <body>
-  <div id="map-container">
+  <div id="map-container" class="map-container">
     <img id="map" src="ArcadiaMap.png" alt="ArcadiaMap">
 
-    <div class="hotspot jungle-stage"><div class="tooltip">Jungle Stage</div></div>
-    <div class="hotspot bar-1"><div class="tooltip">Bar</div></div>
-    <div class="hotspot snack-bar"><div class="tooltip">Snack Bar</div></div>
-    <div class="hotspot chill-garden"><div class="tooltip">Chill Garden</div></div>
-    <div class="hotspot therapies"><div class="tooltip">Therapies</div></div>
-    <div class="hotspot art-space"><div class="tooltip">Art Space</div></div>
-    <div class="hotspot utopia-stage"><div class="tooltip">Utopia Stage</div></div>
-    <div class="hotspot bar-2"><div class="tooltip">Bar</div></div>
-    <div class="hotspot market"><div class="tooltip">Market</div></div>
-    <div class="hotspot psycare"><div class="tooltip">Psycare</div></div>
-    <div class="hotspot bar-3"><div class="tooltip">Bar</div></div>
-    <div class="hotspot food-area"><div class="tooltip">Food Area</div></div>
-    <div class="hotspot workshops"><div class="tooltip">Workshops</div></div>
+    <div class="hotspot jungle-stage" role="button" tabindex="0" aria-label="Jungle Stage"><div class="tooltip">Jungle Stage</div></div>
+    <div class="hotspot bar-1" role="button" tabindex="0" aria-label="Bar"><div class="tooltip">Bar</div></div>
+    <div class="hotspot snack-bar" role="button" tabindex="0" aria-label="Snack Bar"><div class="tooltip">Snack Bar</div></div>
+    <div class="hotspot chill-garden" role="button" tabindex="0" aria-label="Chill Garden"><div class="tooltip">Chill Garden</div></div>
+    <div class="hotspot therapies" role="button" tabindex="0" aria-label="Therapies"><div class="tooltip">Therapies</div></div>
+    <div class="hotspot art-space" role="button" tabindex="0" aria-label="Art Space"><div class="tooltip">Art Space</div></div>
+    <div class="hotspot utopia-stage" role="button" tabindex="0" aria-label="Utopia Stage"><div class="tooltip">Utopia Stage</div></div>
+    <div class="hotspot bar-2" role="button" tabindex="0" aria-label="Bar"><div class="tooltip">Bar</div></div>
+    <div class="hotspot market" role="button" tabindex="0" aria-label="Market"><div class="tooltip">Market</div></div>
+    <div class="hotspot psycare" role="button" tabindex="0" aria-label="Psycare"><div class="tooltip">Psycare</div></div>
+    <div class="hotspot bar-3" role="button" tabindex="0" aria-label="Bar"><div class="tooltip">Bar</div></div>
+    <div class="hotspot food-area" role="button" tabindex="0" aria-label="Food Area"><div class="tooltip">Food Area</div></div>
+    <div class="hotspot workshops" role="button" tabindex="0" aria-label="Workshops"><div class="tooltip">Workshops</div></div>
   </div>
 
   <div id="popup" style="
@@ -99,27 +96,45 @@
   "></div>
 
   <script>
-    function showPopup(event, text) {
+    function showPopup(pageX, pageY, text) {
       const popup = document.getElementById('popup');
-      popup.style.left = event.pageX + 'px';
-      popup.style.top = event.pageY + 'px';
+      popup.style.left = pageX + 'px';
+      popup.style.top = pageY + 'px';
       popup.innerHTML = text;
       popup.style.display = 'block';
+    }
+
+    function activateHotspot(hotspot, pageX, pageY) {
+      document.querySelectorAll('.hotspot').forEach(h => h.classList.remove('active'));
+      hotspot.classList.add('active');
+      const tooltip = hotspot.querySelector('.tooltip');
+      if (tooltip) {
+        showPopup(pageX, pageY, tooltip.textContent);
+      }
     }
 
     document.addEventListener('click', function(e) {
       const hotspot = e.target.closest('.hotspot');
       if (hotspot) {
-        // Activate clicked hotspot
-        document.querySelectorAll('.hotspot').forEach(h => h.classList.remove('active'));
-        hotspot.classList.add('active');
-
-        const tooltip = hotspot.querySelector('.tooltip');
-        if (tooltip) {
-          showPopup(e, tooltip.textContent);
-        }
+        activateHotspot(hotspot, e.pageX, e.pageY);
       } else {
-        // Clicked outside any hotspot
+        document.querySelectorAll('.hotspot').forEach(h => h.classList.remove('active'));
+        document.getElementById('popup').style.display = 'none';
+      }
+    });
+
+    document.addEventListener('keydown', function(e) {
+      const activeEl = document.activeElement;
+      if (activeEl && activeEl.classList && activeEl.classList.contains('hotspot')) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          const rect = activeEl.getBoundingClientRect();
+          const pageX = rect.left + rect.width / 2 + window.scrollX;
+          const pageY = rect.top + rect.height / 2 + window.scrollY;
+          activateHotspot(activeEl, pageX, pageY);
+        }
+      }
+      if (e.key === 'Escape') {
         document.querySelectorAll('.hotspot').forEach(h => h.classList.remove('active'));
         document.getElementById('popup').style.display = 'none';
       }
